@@ -30,7 +30,7 @@
     blockDocumentId?: string,
   }>()
 
-  const emailBlockTypeName = 'Email Addresses'
+  const emailBlockTypeName = 'KV Server Storage'
   const slackBlockTypeName = 'Slack Webhook'
 
   const buttonGroup: ButtonGroupOption[] = [
@@ -71,33 +71,33 @@
 
   // }
 
-  const blockSchema = computed(() => {
-    if (props.blockDocumentId) {
-      const blockDocumentsSubscription = useSubscription(blockDocumentsApi.getBlockDocument, [props.blockDocumentId])
-      const blockDocument = computed(() => blockDocumentsSubscription.response)
-      const blockSchema = computed(() => blockDocument.value?.blockSchema)
+  const blockSchema = ref()
 
-      console.log(1, blockSchema)
+  if (props.blockDocumentId) {
+    const blockDocumentsSubscription = useSubscription(blockDocumentsApi.getBlockDocument, [props.blockDocumentId])
+    const blockDocument = computed(() => blockDocumentsSubscription.response)
+    blockSchema.value = computed(() => blockDocument.value?.blockSchema)
 
-      return blockSchema
-    }
-
-    const blockTypeSubscription = useSubscription(blockTypesApi.getBlockTypeByName, [selectedButton.value as string])
-    const blockTypeId = computed(() => blockTypeSubscription.response?.id)
-    const blockSchemaSubscriptionArgs = computed(() => ({
-      blockSchemas: {
-        blockTypeId: {
-          any_: [blockTypeId.value],
-        },
-      },
-    }))
-    const blockSchemaSubscription = useSubscription(blockSchemasApi.getBlockSchemas, [blockSchemaSubscriptionArgs as BlockSchemaFilter])
-    const blockSchema = computed(() => blockSchemaSubscription.response?.[0])
-
-    console.log(2, blockSchema.value)
+    console.log(1, blockSchema)
 
     return blockSchema
-  })
+  }
+
+  const blockTypeSubscription = await blockTypesApi.getBlockTypeByName(selectedButton.value as string)
+  const blockTypeId = computed(() => blockTypeSubscription.id)
+  console.log('type id', blockTypeId)
+
+  const blockSchemaSubscriptionArgs = computed(() => ({
+    blockSchemas: {
+      blockTypeId: {
+        any_: [blockTypeId.value],
+      },
+    },
+  }))
+
+  const blockSchemaSubscription = useSubscription(blockSchemasApi.getBlockSchemas, [blockSchemaSubscriptionArgs as BlockSchemaFilter])
+  blockSchema.value = computed(() => blockSchemaSubscription.response?.[0])
+
 
   const emit = defineEmits<{
     (event: 'update:data', value: BlockDocumentData): void,
