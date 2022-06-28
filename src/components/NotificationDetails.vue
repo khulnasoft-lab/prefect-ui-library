@@ -47,7 +47,7 @@
   const props = defineProps<{
     notification: Partial<Notification>,
     sendToInput?: string[] | string,
-    sendToType?: SelectModelValue,
+    sendToType?: string,
   }>()
 
 
