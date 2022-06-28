@@ -120,14 +120,14 @@
         limit: 1,
       }
       const blockSchema = await blockSchemasApi.getBlockSchemas(filter)
-      const blockDoc: BlockDocumentCreate = {
+      const blockDocument: BlockDocumentCreate = {
         is_anonymous: true,
         data: { [selectedSendToLabel.value]: input.value },
         blockSchemaId: blockSchema[0].id,
         blockTypeId: blockType.id,
 
       }
-      const block = await blockDocumentsApi.createBlockDocument(blockDoc)
+      const block = await blockDocumentsApi.createBlockDocument(blockDocument)
       const notification = { name:`${block.name}`, is_active: true, state_names: stateNames.value, tags: tags.value, block_document_id: block.id }
       await notificationsApi.createNotification(notification)
       router.push(notificationsRoute())
