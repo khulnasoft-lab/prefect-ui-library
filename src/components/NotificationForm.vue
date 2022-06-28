@@ -20,33 +20,25 @@
       <p-text-input v-model="input" />
     </p-label>
 
-    <!--
-      <p-label label="Webhook Name">
-      <p-text-input v-model="input" />
-      </p-label>
-    -->
-
-    <!-- <NotificationsBlockSelector :block-document-id="notification?.blockDocumentId" /> -->
-
     <p class="notification-form__message">
       Review your notification.
     </p>
 
     <div class="notification-form__review-block">
       <NotificationDetails :notification="notificationDetails" :send-to-input="input" :send-to-type="selectedSendToType" />
-      <!-- <NotificationDetails :notification="notificationDetails" /> -->
     </div>
   </p-form>
 </template>
 
 <script lang="ts" setup>
-  import { PLabel, PTagsInput, PTextInput, PForm, ButtonGroupOption, PCombobox, PButtonGroup } from '@prefecthq/prefect-design'
+  import { PLabel, PTagsInput, PTextInput, PForm, ButtonGroupOption, PButtonGroup } from '@prefecthq/prefect-design'
   import { useForm } from 'vee-validate'
   import { computed, ref, watch } from 'vue'
+  import { useRouter } from 'vue-router'
   import NotificationDetails from './NotificationDetails.vue'
-  import NotificationsBlockSelector from './NotificationsBlockSelector.vue'
   import StateSelect from '@/components/StateSelect.vue'
-  import { Notification } from '@/models'
+  import { BlockDocumentCreate, Notification } from '@/models'
+  import { notificationsRouteKey } from '@/router/routes'
   import { blockDocumentsApiKey, blockSchemasApiKey, blockTypesApiKey, notificationsApiKey } from '@/services'
   import { inject } from '@/utilities'
 
@@ -54,11 +46,13 @@
     notification?: Notification,
   }>()
 
+  const router = useRouter()
+  const notificationsRoute = inject(notificationsRouteKey)
+
   const blockDocumentsApi = inject(blockDocumentsApiKey)
   const blockTypesApi = inject(blockTypesApiKey)
   const blockSchemasApi = inject(blockSchemasApiKey)
   const notificationsApi = inject(notificationsApiKey)
-
 
   const { handleSubmit, isSubmitting } = useForm<Notification>({ initialValues: props.notification })
 
@@ -73,12 +67,12 @@
     }
   })
 
-  const buttonGroup: any[] = [
-    {
-      label: 'Email',
-      value: 'email_addresses',
-      inputLabel: 'Email Address',
-    },
+  const buttonGroup = [
+    // {
+    //   label: 'Email',
+    //   value: 'KV Server Storage',
+    //   inputLabel: 'Email Address',
+    // },
     {
       label: 'Slack Webhook',
       value: 'Slack Webhook',
@@ -90,67 +84,55 @@
   const blockDocument = props.notification?.blockDocumentId ? await blockDocumentsApi.getBlockDocument(props.notification.blockDocumentId) : null
   const blockDocumentType = computed(()=> blockDocument?.blockType.name ?? '')
 
-  // const blockDocumentData = computed(() => blockDocument?.data)
-  // const blockDocumentDataKey = computed(() => blockDocumentData.value ? Object.keys(blockDocumentData.value)[0] : null)
-  // const blockDocumentDataValue = computed(() => blockDocumentData.value && blockDocumentDataKey.value ? blockDocumentData.value[blockDocumentDataKey.value] as string[] : null)
-
-
   const selectedSendToType = ref(blockDocumentType.value || buttonGroup[0].value)
   const key = blockDocument?.data ? Object.keys(blockDocument.data)[0] : null
   const selectedSendToLabel =ref(key ? key : buttonGroup[0].inputLabel)
 
   watch(() => selectedSendToType.value, (current) => {
-    selectedSendToLabel.value = buttonGroup.find((button: ButtonGroupOption) => button.value === current).inputLabel
+    selectedSendToLabel.value = buttonGroup.find((button: ButtonGroupOption) => button.value === current)!.inputLabel
   })
 
   const blockDocumentInputValue: string | string[] | undefined = key ? blockDocument?.data[key] as string | string[] : undefined
-  const input = ref(blockDocumentInputValue ?? '')
+  const blockDocumentInputValueAsString = Array.isArray(blockDocumentInputValue) ? blockDocumentInputValue.join() : blockDocumentInputValue
+  const input = ref(blockDocumentInputValueAsString ?? '')
 
 
   const emit = defineEmits<{
-    (event: 'submit', value: any): void,
     (event: 'cancel'): void,
   }>()
 
   const submit = handleSubmit(() => {
-    const notificationData = {
-      type: selectedSendToType.value,
-      data: { [selectedSendToLabel.value]: input.value },
-    }
-    console.log('notificationData', notificationData)
-    // emit('submit', notificationData)
-    createNotification(notificationData)
+    createNotification()
   })
+
   function cancel(): void {
     emit('cancel')
   }
 
-  const createNotification = async (ev: any): Promise<void>=> {
+  const createNotification = async (): Promise<void>=> {
     try {
-      console.log('e', ev)
-      const blockType = await blockTypesApi.getBlockTypeByName(ev.type)
+      const blockType = await blockTypesApi.getBlockTypeByName(selectedSendToType.value)
       const filter =  {
         blockTypeId: {
           any_: [blockType.id],
         },
         sort: 'CREATED_TIME_DESC',
-        limit: 10,
+        limit: 1,
       }
       const blockSchema = await blockSchemasApi.getBlockSchemas(filter)
-      const blockDoc: any = {
+      const blockDoc: BlockDocumentCreate = {
         is_anonymous: true,
-        data: ev.data,
+        data: { [selectedSendToLabel.value]: input.value },
         blockSchemaId: blockSchema[0].id,
         blockTypeId: blockType.id,
 
       }
       const block = await blockDocumentsApi.createBlockDocument(blockDoc)
-      console.log(block)
-      const notification = { name:`2${block.name}`, is_active: true, state_names: stateNames.value, tags: tags.value, block_document_id: block.id }
-      const notificationRes = await notificationsApi.createNotification(notification)
-      console.log(notificationRes)
-    } catch (e) {
-      console.warn(e)
+      const notification = { name:`${block.name}`, is_active: true, state_names: stateNames.value, tags: tags.value, block_document_id: block.id }
+      await notificationsApi.createNotification(notification)
+      router.push(notificationsRoute())
+    } catch (error) {
+      console.warn(error)
     }
   }
 </script>
