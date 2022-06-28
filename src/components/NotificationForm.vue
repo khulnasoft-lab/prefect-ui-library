@@ -54,7 +54,7 @@
   const blockSchemasApi = inject(blockSchemasApiKey)
   const notificationsApi = inject(notificationsApiKey)
 
-  const { handleSubmit, isSubmitting } = useForm<Notification>({ initialValues: props.notification })
+  const { handleSubmit, handleReset, isSubmitting } = useForm<Notification>({ initialValues: props.notification })
 
   const stateNames = ref(props.notification?.stateNames ? [...props.notification.stateNames] : [])
   const tags = ref(props.notification?.tags ? [...props.notification.tags] : [])
@@ -106,7 +106,9 @@
   })
 
   function cancel(): void {
+    handleReset()
     emit('cancel')
+    router.push(notificationsRoute())
   }
 
   const createNotification = async (): Promise<void>=> {
