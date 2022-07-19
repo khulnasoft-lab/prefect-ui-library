@@ -6,7 +6,7 @@
       </template>
     </p-content>
 
-    <template #footer>
+    <template v-if="!hideFooter" #footer>
       <p-button type="submit">
         Save
       </p-button>
@@ -23,6 +23,7 @@
 
   type PydanticFormValue = Record<string, unknown>
   const props = defineProps<{
+    hideFooter?: boolean,
     modelValue?: PydanticFormValue,
     pydanticSchema: PydanticTypeDefinition,
   }>()

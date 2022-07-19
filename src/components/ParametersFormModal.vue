@@ -6,9 +6,7 @@
     </p-label>
 
     <template v-if="parametersForm == 'default'">
-      <p>
-        Coming soon
-      </p>
+      <PydanticForm v-model="internalParameters" :pydantic-schema="schema" hide-footer />
     </template>
 
     <template v-else-if="parametersForm == 'json'">
@@ -25,34 +23,41 @@
 
 <script lang="ts" setup>
   import { ButtonGroupOption } from '@prefecthq/prefect-design'
-  import { computed, reactive, ref } from 'vue'
+  import { computed, ref } from 'vue'
   import JsonEditor from './JsonEditor.vue'
+  import PydanticForm from './PydanticForm.vue'
   import { useShowModal } from '@/compositions'
+  import type { PydanticTypeDefinition } from '@/types/Pydantic'
+
   const { showModal, open, close } = useShowModal()
   type Parameters = Record<string, unknown>
+
   const props = defineProps<{
+    schema: PydanticTypeDefinition,
     parameters?: Parameters,
   }>()
+
   const emit = defineEmits<{
     (event: 'submit', value: Parameters): void,
   }>()
-  let parameters = reactive(props.parameters ?? {})
+
+  const internalParameters = ref(props.parameters ?? {})
   const stringValue = computed({
     get() {
-      return JSON.stringify(parameters)
+      return JSON.stringify(internalParameters.value)
     },
     set(val) {
       try {
-        parameters = JSON.parse(val)
+        internalParameters.value = JSON.parse(val)
       } catch {
       // Do nothing
       }
     },
   })
-  const parametersForm = ref('json')
+  const parametersForm = ref('default')
   const parameterFormOptions: ButtonGroupOption[] = [{ label: 'Default', value: 'default' }, { label: 'JSON', value: 'json' }]
   const submit = (): void => {
-    emit('submit', parameters)
+    emit('submit', internalParameters.value)
     close()
   }
 </script>
