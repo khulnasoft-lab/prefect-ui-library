@@ -85,6 +85,7 @@
   @apply
   relative
   h-full
+  min-h-[150px]
 }
 
 .json-editor__output-content {
