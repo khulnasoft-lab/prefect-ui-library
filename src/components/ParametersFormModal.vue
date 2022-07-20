@@ -1,17 +1,19 @@
 <template>
   <slot :open="open" :close="close" />
   <p-modal v-model:showModal="showModal" class="parameters-form-modal" title="Edit parameters">
-    <p-label label="Mode">
+    <p-label label="Input mode">
       <p-button-group v-model="parametersForm" :options="parameterFormOptions" size="sm" />
     </p-label>
 
-    <template v-if="parametersForm == 'default'">
-      <PydanticForm v-model="internalParameters" :pydantic-schema="schema" hide-footer />
-    </template>
+    <section class="parameters-form-modal__body">
+      <template v-if="parametersForm == 'default'">
+        <PydanticForm v-model="internalParameters" :pydantic-schema="schema" hide-footer />
+      </template>
 
-    <template v-else-if="parametersForm == 'json'">
-      <JsonEditor v-model="stringValue" />
-    </template>
+      <template v-else-if="parametersForm == 'json'">
+        <JsonEditor v-model="stringValue" />
+      </template>
+    </section>
 
     <template #actions>
       <p-button type="submit" @click="submit">
@@ -61,3 +63,14 @@
     close()
   }
 </script>
+
+<style>
+.parameters-form-modal__body {
+  max-height: calc(60vh);
+
+  @apply
+  px-2
+  overflow-y-auto
+  h-min
+}
+</style>
