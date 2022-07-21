@@ -39,6 +39,7 @@ export type PydanticTypeDefinitionComponent = {
   component?: typeof InputComponents[number],
   defaultValue: unknown,
   validators: ValidateMethod[],
+  initialValue?: (val: unknown) => unknown,
   slots?: Record<string, unknown>,
 }
 
@@ -171,6 +172,13 @@ const getBaseDateInput = (): BaseDateInput => {
     },
     component: PDateInput,
     defaultValue: new Date(),
+    // initialValue: (val: string | Date): Date => {
+    //   if (typeof val == 'string') {
+    //     return new Date(val)
+    //   }
+
+    //   return val
+    // },
     validators: [],
   }
 }

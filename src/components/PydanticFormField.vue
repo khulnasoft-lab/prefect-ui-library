@@ -19,7 +19,7 @@
 
 <script lang="ts" setup>
   import { useField } from 'vee-validate'
-  import { computed } from 'vue'
+  import { computed, onMounted } from 'vue'
   import { PydanticTypeDefinition } from '@/types/Pydantic'
   import { getComponentFromPydanticTypeDefinition } from '@/utilities'
 
@@ -33,5 +33,11 @@
   const fieldLabel = computed(() => props.propKey.split('.').pop())
   const message = computed(() => fieldComponent.value ? undefined : "This field has a type 'None' and cannot be modified.")
 
-  const { value: internalValue, errorMessage, meta } = useField(props.propKey, fieldComponent.value?.validators, { initialValue: fieldComponent.value?.defaultValue })
+  const { value: internalValue, errorMessage, meta } = useField(props.propKey, fieldComponent.value?.validators)
+
+  onMounted(() => {
+    if (typeof internalValue.value == 'undefined') {
+      internalValue.value = fieldComponent.value?.defaultValue
+    }
+  })
 </script>
