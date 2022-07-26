@@ -83,9 +83,9 @@
   w-full
   h-full
   min-h-[inherit]
-  bg-slate-700
+  /* opacity-50 */
   text-transparent
-  caret-slate-50
+  caret-slate-700
   p-4
   m-0
   whitespace-nowrap

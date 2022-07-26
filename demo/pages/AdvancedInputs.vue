@@ -7,11 +7,13 @@
     </template>
 
     <JsonEditorSection />
+    <MarkdownEditorSection />
     <PythonEditorSection />
   </p-layout-default>
 </template>
 
 <script lang="ts" setup>
   import JsonEditorSection from '../sections/JsonEditorSection.vue'
+  import MarkdownEditorSection from '../sections/MarkdownEditorSection.vue'
   import PythonEditorSection from '../sections/PythonEditorSection.vue'
 </script>
