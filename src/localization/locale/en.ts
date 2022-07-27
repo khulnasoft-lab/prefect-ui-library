@@ -10,6 +10,7 @@ export const en = {
   },
   error: {
     activateDeployment: 'Failed to activate deployment',
+    updateDeployment: 'Failed to update deployment',
     pauseDeployment: 'Failed to pause deployment',
     submitNotification: 'Failed to submit notification',
     activateNotification: 'Failed to activate notification',
@@ -30,6 +31,7 @@ export const en = {
   },
   success: {
     activateDeployment: 'Deployment active',
+    updateDeployment: 'Deployment updated',
     pauseDeployment: 'Deployment paused',
     activateNotification: 'Notification active',
     pauseNotification: 'Notification paused',
