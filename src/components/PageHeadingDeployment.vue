@@ -1,11 +1,11 @@
 <template>
   <page-heading class="page-heading-deployment" :crumbs="crumbs">
     <template #actions>
-      <DeploymentToggle :deployment="deployment" @update="emit('update')" />
+      <DeploymentToggle :deployment="deployment" :disabled="disabled" @update="emit('update')" />
 
-      <RunButton v-if="can.create.flow_run" :deployment="deployment" />
+      <RunButton v-if="can.create.flow_run" :disabled="disabled" :deployment="deployment" />
 
-      <DeploymentMenu :deployment="deployment" @delete="handleDelete" />
+      <DeploymentMenu :deployment="deployment" :edit-disabled="disabled" @delete="handleDelete" />
     </template>
   </page-heading>
 </template>
@@ -30,6 +30,7 @@
 
   const props = defineProps<{
     deployment: Deployment,
+    disabled?: boolean,
   }>()
 
 
