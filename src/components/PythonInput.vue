@@ -14,6 +14,8 @@
       />
       <div ref="viewArea" class="python-input__view-area">
         <PythonView :value="internalValue" class="python-input__python-view" v-bind="attrs" />
+        <!-- This is an important space to scroll link the preview and input elements -->
+        &nbsp;
       </div>
     </template>
   </p-base-input>

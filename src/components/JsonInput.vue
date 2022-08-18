@@ -14,6 +14,8 @@
       />
       <div ref="viewArea" class="json-input__view-area">
         <JsonView :value="internalValue" class="json-input__json-view" v-bind="attrs" />
+        <!-- This is an important space to scroll link the preview and input elements -->
+        &nbsp;
       </div>
 
       <p-button v-if="showFormatButton" class="json-input__prettify-button" size="xs" @click="format">
