@@ -19,7 +19,7 @@
 <script lang="ts" setup>
   import { SelectOption } from '@prefecthq/prefect-design'
   import { onMounted, ref, watch } from 'vue'
-  import DemoSection from '../components/DemoSection.vue'
+  // import DemoSection from '../components/DemoSection.vue'
   import { MarkdownInput, MarkdownView } from '@/components'
 
   const options: (SelectOption & { url: string })[] = [

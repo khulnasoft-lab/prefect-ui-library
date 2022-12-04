@@ -9,18 +9,25 @@
     </template>
 
     <template #description>
-      <div>
-        Install Prefect and log in
+      <div class="cloud-int">
+        <div>
+          Install Prefect and log in
+        </div>
+        <p-terminal command="Pip install -U prefect" pre-command="prefect cloud login" />
+
+
+        Run a flow
+        <p-code multiline>
+          <div>from prefect import Flow</div>
+          <div>@flow</div>
+          <div>def hello_flow</div>
+        </p-code>
       </div>
-      <p-terminal command="Pip install -U prefect" pre-command="prefect cloud login" />
-      Run a flow
-      <p-terminal pre-command="from prefect import flow" command="@flow...">
-        <template #actions>
-          <DocumentationButton topic="gettingStarted">
-            Find Out More
-          </DocumentationButton>
-        </template>
-      </p-terminal>
+    </template>
+    <template #actions>
+      <DocumentationButton topic="gettingStarted">
+        Find Out More
+      </DocumentationButton>
     </template>
   </p-empty-state>
 </template>
@@ -29,3 +36,10 @@
   import { PEmptyState, PIcon } from '@prefecthq/prefect-design'
   import DocumentationButton from './DocumentationButton.vue'
 </script>
+
+<style>
+.cloud-int {
+  @apply
+  text-left
+}
+</style>

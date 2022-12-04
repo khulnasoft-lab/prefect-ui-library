@@ -1,6 +1,7 @@
 
 <template>
-  <RenderRoot />
+  <!-- <RenderRoot /> -->
+  <span>hello</span>
 </template>
 
 <script lang="ts" setup>
@@ -100,7 +101,7 @@
     //     break
     // }
 
-    if (token.text?.includes('res')) {
+    if (token && token.text?.includes('res')) {
       console.log({ token })
     }
 
