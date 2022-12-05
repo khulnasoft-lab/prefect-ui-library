@@ -1,35 +1,48 @@
+<!-- eslint-disable vue/html-indent -->
 <template>
-  <p-empty-state class="flow-runs-page-empty-state">
+  <!--
+    <p-empty-state class="flow-runs-page-empty-state">
     <template #icon>
-      <p-icon icon="FlowRun" />
+    <p-icon icon="FlowRun" /> Run a flow to get started
     </template>
 
-    <template #heading>
-      Run a flow to get started
-    </template>
+    <template #heading />
+  -->
 
-    <template #description>
+    <!-- <template #description> -->
       <div class="cloud-int">
-        <div>
+        <div class="mb-4">
           Install Prefect and log in
         </div>
-        <p-terminal command="Pip install -U prefect" pre-command="prefect cloud login" />
+        <p-terminal pre-command="Pip install -U prefect" command="prefect cloud login" />
 
+        <div class="mb-4 mt-4">
+          Run a flow
+        </div>
+        <div class="language-python">
+        <pre>
+          <code>
+from prefect import flow
 
-        Run a flow
-        <p-code multiline>
-          <div>from prefect import Flow</div>
-          <div>@flow</div>
-          <div>def hello_flow</div>
-        </p-code>
+@flow
+  def hello_flow():
+    print('hello')
+
+if __name__ == "__main__":
+hello_flow()
+          </code>
+        </pre>
       </div>
-    </template>
-    <template #actions>
+      </div>
+    <!--
+      </template>
+      <template #actions>
       <DocumentationButton topic="gettingStarted">
-        Find Out More
+      Find Out More
       </DocumentationButton>
-    </template>
-  </p-empty-state>
+      </template>
+      </p-empty-state>
+    -->
 </template>
 
 <script lang="ts" setup>
@@ -41,5 +54,20 @@
 .cloud-int {
   @apply
   text-left
+  border-[1px]
+  border-gray-300
+  px-6
+  py-6
+  rounded-lg
+  cursor-pointer
+
+}
+
+.language-python {
+  @apply
+bg-slate-700
+  px-8
+  text-slate-50
+  rounded
 }
 </style>

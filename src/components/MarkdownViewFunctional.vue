@@ -101,9 +101,9 @@
     //     break
     // }
 
-    if (token && token.text?.includes('res')) {
-      console.log({ token })
-    }
+    // if (token && token.text?.includes('res')) {
+    //   console.log({ token })
+    // }
 
     if (token.type == 'text') {
 
