@@ -1,15 +1,13 @@
 <!-- eslint-disable vue/html-indent -->
 <template>
-  <!--
-    <p-empty-state class="flow-runs-page-empty-state">
+  <p-empty-state class="flow-runs-page-empty-state">
     <template #icon>
-    <p-icon icon="FlowRun" /> Run a flow to get started
+      <p-icon icon="FlowRun" /> Run a flow to get started
     </template>
 
     <template #heading />
-  -->
 
-    <!-- <template #description> -->
+    <template #description>
       <div class="cloud-int">
         <div class="mb-4">
           Install Prefect and log in
@@ -34,15 +32,13 @@ hello_flow()
         </pre>
       </div>
       </div>
-    <!--
-      </template>
-      <template #actions>
+    </template>
+    <template #actions>
       <DocumentationButton topic="gettingStarted">
-      Find Out More
+        Find Out More
       </DocumentationButton>
-      </template>
-      </p-empty-state>
-    -->
+    </template>
+  </p-empty-state>
 </template>
 
 <script lang="ts" setup>
