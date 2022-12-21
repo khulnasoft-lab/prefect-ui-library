@@ -6,7 +6,6 @@
       </template>
       <template #table>
         <ParametersTable :parameters="parameters" :deployment="deployment" />
-        {{ parameters }}
       </template>
     </p-tabs>
   </ComponentPage>
@@ -18,5 +17,5 @@
   import { mocker } from '@/services'
 
   const deployment = mocker.create('deployment')
-  const parameters = mocker.create('parameters', [deployment.parameterOpenApiSchema])
+  const parameters = mocker.create('parameters', [{}, deployment.parameterOpenApiSchema])
 </script>
