@@ -1,6 +1,6 @@
 <template>
   <div class="schema-form-property">
-    <p-checkbox v-model="enabled" />
+    <!-- <p-checkbox v-model="enabled" /> -->
     <component :is="is" v-if="enabled" v-bind="{ property, propKey, enabled }" />
     <component :is="is" v-else v-bind="{ property, propKey, enabled }" />
   </div>
@@ -20,9 +20,7 @@
     property: SchemaProperty,
   }>()
 
-  console.log(props.property)
   const fieldValue = useFieldValue(props.propKey)
-  console.log(fieldValue)
   const enabled = ref(fieldValue.value !== undefined)
 
   const is = computed(() => {
