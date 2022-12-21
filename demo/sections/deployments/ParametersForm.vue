@@ -11,7 +11,9 @@
           Value
         </p-button>
         <p-modal v-model:show-modal="showValueModal" title="Form value">
-          <JsonView multiline :value="stringifiedValue" />
+          <div class="parameters-form__value-container">
+            <JsonView class="parameters-form__value-container__view" multiline :value="stringifiedValue" />
+          </div>
 
           <template #cancel>
             <p-button inset @click="showValueModal = false">
@@ -28,7 +30,7 @@
 
     <p-tabs :tabs="['Form', 'Table']">
       <template #form>
-        <SchemaFormFields v-model="value" property="parameters" :schema="deployment.parameterOpenApiSchema" />
+        <SchemaForm v-model="value" property="parameters" :schema="deployment.parameterOpenApiSchema" />
       </template>
       <template #table>
         <ParametersTable :parameters="parameters" :deployment="deployment" />
@@ -39,7 +41,7 @@
 
 <script lang="ts" setup>
   import { ref, onBeforeMount, computed } from 'vue'
-  import { SchemaFormFields, ParametersTable, JsonView } from '@/components'
+  import { SchemaForm, ParametersTable, JsonView } from '@/components'
   import ComponentPage from '@/demo/components/ComponentPage.vue'
   import { mocker } from '@/services'
 
@@ -59,3 +61,20 @@
 
   onBeforeMount(refresh)
 </script>
+
+<style>
+.parameters-form__value-container {
+  @apply
+  max-w-full
+  relative
+  min-w-0
+  overflow-hidden
+}
+
+.parameters-form__value-container__view {
+  @apply
+  max-w-full
+  relative
+  overflow-auto
+}
+</style>

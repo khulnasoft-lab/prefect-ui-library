@@ -1,11 +1,14 @@
 <template>
   <div class="schema-form-property">
-    <component :is="is" v-bind="{ property, propKey }" />
+    <p-checkbox v-model="enabled" />
+    <component :is="is" v-if="enabled" v-bind="{ property, propKey, enabled }" />
+    <component :is="is" v-else v-bind="{ property, propKey, enabled }" />
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { computed } from 'vue'
+  import { useFieldValue } from 'vee-validate'
+  import { computed, ref } from 'vue'
   import SchemaFormInput from '@/components/SchemaFormInput.vue'
   import SchemaFormProperties from '@/components/SchemaFormProperties.vue'
   import SchemaFormPropertyAllOf from '@/components/SchemaFormPropertyAllOf.vue'
@@ -16,6 +19,11 @@
     propKey: string,
     property: SchemaProperty,
   }>()
+
+  console.log(props.property)
+  const fieldValue = useFieldValue(props.propKey)
+  console.log(fieldValue)
+  const enabled = ref(fieldValue.value !== undefined)
 
   const is = computed(() => {
     if (schemaHas(props.property, 'meta')) {
@@ -39,7 +47,9 @@
 </script>
 
 <style>
-.schema-form-property__component { @apply
-  pl-2
+.schema-form-property { @apply
+  flex
+  gap-2
+  items-start
 }
 </style>

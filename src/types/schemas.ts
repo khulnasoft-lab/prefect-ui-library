@@ -8,9 +8,10 @@ export type SchemaValues = Record<string, SchemaValue | undefined>
 export const SchemaStringFormats = ['date', 'regex', 'date-time', 'time-delta', 'email', 'json-string', 'password'] as const
 export const SchemaTypes = [
   // prefect ui custom types
-  'block',
+  // 'block',
   // open api types
-  'null', 'string', 'boolean', 'integer', 'number', 'array', 'object',
+  'null', 'string', 'boolean', 'integer', 'number', 'array',
+  // 'object',
 ] as const
 export const BaseDefinitionRefString = '#/definitions/' as const
 

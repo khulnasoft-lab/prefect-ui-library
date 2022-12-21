@@ -1,5 +1,8 @@
 <template>
   <p-form @submit="submit">
+    <p-button @click="reset">
+      reset
+    </p-button>
     <SchemaFormFields :schema="schema" />
 
     <template #footer>
@@ -11,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed } from 'vue'
+  import { computed, watchEffect } from 'vue'
   import SchemaFormFields from '@/components/SchemaFormFields.vue'
   import { useReactiveForm } from '@/compositions'
   import { Schema, SchemaValues } from '@/types/schemas'
@@ -34,6 +37,15 @@
     },
   })
 
-  const { handleSubmit } = useReactiveForm(internalValue, { initialValues: { ...props.modelValue } })
+  const { handleSubmit, meta, values, resetForm } = useReactiveForm(internalValue, { initialValues: props.modelValue })
   const submit = handleSubmit(values => emit('submit', values))
+
+  watchEffect(() => {
+    console.log(values)
+    console.log(meta.value)
+  })
+
+  const reset = () => {
+    resetForm({})
+  }
 </script>
