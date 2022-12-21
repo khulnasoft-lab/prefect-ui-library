@@ -11,7 +11,7 @@
           Value
         </p-button>
         <p-modal v-model:show-modal="showValueModal" title="Form value">
-          <JsonView multiline :value="JSON.stringify(value, null, 2)" />
+          <JsonView multiline :value="stringifiedValue" />
 
           <template #cancel>
             <p-button inset @click="showValueModal = false">
@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, onBeforeMount } from 'vue'
+  import { ref, onBeforeMount, computed } from 'vue'
   import { SchemaFormFields, ParametersTable, JsonView } from '@/components'
   import ComponentPage from '@/demo/components/ComponentPage.vue'
   import { mocker } from '@/services'
@@ -47,6 +47,7 @@
   const parameters = ref()
 
   const value = ref({})
+  const stringifiedValue = computed(() => JSON.stringify(value.value, null, 2))
   const showValueModal = ref(false)
 
   const refresh = (): void => {

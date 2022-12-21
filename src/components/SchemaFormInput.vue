@@ -1,26 +1,29 @@
 <template>
-  <p-label class="schema-form-input" :label="label" :message="errorMessage" :state="state">
-    <template #description>
-      <div class="schema-form-input__description">
-        <template v-if="property.description">
-          <p>{{ property.description }}</p>
-        </template>
+  <span class="flex gap-2 items-start">
+    <p-checkbox v-model="enabled" />
+    <p-label class="schema-form-input" :label="label" :message="errorMessage" :state="state">
+      <template #description>
+        <div class="schema-form-input__description">
+          <template v-if="property.description">
+            <p>{{ property.description }}</p>
+          </template>
 
-        <template v-if="isNullType">
-          <p-icon-text icon="QuestionMarkCircleIcon" solid text="This field has a type 'None' and cannot be modified" />
-        </template>
-      </div>
-    </template>
+          <template v-if="isNullType">
+            <p-icon-text icon="QuestionMarkCircleIcon" solid text="This field has a type 'None' and cannot be modified" />
+          </template>
+        </div>
+      </template>
 
-    <template v-if="meta">
-      <component :is="meta.component" v-model="propValue" v-bind="{ ...meta.props, ...meta.attrs }" />
-    </template>
-  </p-label>
+      <template v-if="meta">
+        <component :is="meta.component" v-model="propValue" :disabled="!enabled" v-bind="{ ...meta.props, ...meta.attrs }" />
+      </template>
+    </p-label>
+  </span>
 </template>
 
 <script lang="ts" setup>
   import { useField } from 'vee-validate'
-  import { computed } from 'vue'
+  import { computed, ref } from 'vue'
   import { SchemaProperty } from '@/types/schemas'
 
   const props = defineProps<{
@@ -42,6 +45,7 @@
   const isNullType = computed(() => props.property.type === 'null')
 
   const { value: propValue, errorMessage, meta: state } = useField(props.propKey, meta.value?.validators)
+  const enabled = ref(!!propValue.value || props.property.default !== undefined || props.property.meta?.required)
 </script>
 
 <style>
