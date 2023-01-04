@@ -23,7 +23,7 @@ type is_null_ = { is_null_?: boolean }
 type before_ = { before_?: string }
 
 /** A date-time string to include results starting at or after this time */
-type after_ = { after_?: string }
+type after_ = { after_?: string | Date }
 
 type operator_ = 'and_' | 'or_'
 
@@ -38,7 +38,9 @@ export interface DeploymentFilter extends Filter {
   is_schedule_active?: eq_,
 }
 
-export type FlowFilter = Filter
+export interface FlowFilter extends Filter {
+  flow_runs?: FlowRunFilter,
+}
 
 export type StateFilter = {
   type?: any_,
