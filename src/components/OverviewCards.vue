@@ -1,41 +1,43 @@
 <template>
-  <p-card>
+  <p-card class="overview-cards__card">
     <p-content>
-      Failed Flows
+      Flows with recent runs
+      <div v-for="flow, index in recentFlows" :key="index">
+        <FlowIconText :flow-id="flow" />
+      </div>
+    </p-content>
+  </p-card>
+
+  <p-card class="overview-cards__card">
+    <p-content>
+      Flows with failed runs
       <div v-for="flow, index in failedFlows" :key="index">
         <FlowIconText :flow-id="flow" />
       </div>
     </p-content>
   </p-card>
-  <!--
-    <p-card>
-    <p-content>
-    Unhealthy Queues
-    <div v-for="worker in workers" :key="worker.id">
-    <div>
-    {{ worker.name }}
-    </div>
-    <div>
-    {{ worker }}
-    </div>
-    </div>
-    </p-content>
-    </p-card>
-  -->
 
-  <p-card>
+  <p-card class="overview-cards__card">
     <p-content>
-      Failed Work Queues
+      Work Queues with failed runs
       <div v-for="queue, index in failedWorkQueues" :key="index">
-        <div>
-          {{ queue }}
-        </div>
+        <WorkQueueIconText v-if="queue" :work-queue-name="queue" />
       </div>
     </p-content>
   </p-card>
-  <p-card>
+
+  <p-card class="overview-cards__card">
     <p-content>
-      Failed Deployments
+      Work Queues with late runs
+      <div v-for="queue, index in lateWorkQueues" :key="index">
+        <WorkQueueIconText v-if="queue" :work-queue-name="queue" />
+      </div>
+    </p-content>
+  </p-card>
+
+  <p-card class="overview-cards__card">
+    <p-content>
+      Deployments with failed runs
       <div v-for="deployment, index in failedDeployments" :key="index">
         <DeploymentIconText v-if="deployment" :deployment-id="deployment" />
       </div>
@@ -46,6 +48,7 @@
 <script lang="ts" setup>
   import { useSubscription } from '@prefecthq/vue-compositions'
   import { computed, watch, Ref } from 'vue'
+  import { WorkQueueIconText } from '.'
   import DeploymentIconText from '@/components/DeploymentIconText.vue'
   import FlowIconText from '@/components/FlowIconText.vue'
   import { useWorkspaceApi, useFlowRunFilterFromRoute } from '@/compositions'
@@ -84,7 +87,21 @@
 
   const { tags } = useFlowRunFilterFromRoute()
 
-  const updatedFlowRunFilter = computed(() => {
+  const recentFlowRunFilter = computed(() => {
+    const filter = {
+      'flow_runs': {
+        'tags': {
+          all_: tags.value,
+        },
+        'expected_start_time': {
+          after_: defaultStartDate,
+        },
+      },
+    }
+    return filter
+  })
+
+  const failedFlowRunFilter = computed(() => {
     const filter = {
       'flow_runs': {
         state: {
@@ -103,18 +120,28 @@
     return filter
   })
 
-  // watch(tags, () => {
-  //   console.log('tags', tags.value)
-  //   updatedFlowRunFilter.value.flow_runs.tags = {
-  //     all_: tags.value,
-  //   }
-  //   console.log(updatedFlowRunFilter.value)
-  // },
-  // )
+  const lateFlowRunFilter = computed(() => {
+    const filter = {
+      'flow_runs': {
+        state: {
+          name: {
+            any_: ['Late'],
+          },
+        },
+        'tags': {
+          all_: tags.value,
+        },
+        'expected_start_time': {
+          after_: defaultStartDate,
+        },
+      },
+    }
+    return filter
+  })
 
-  const flowRunsSubscription = useSubscription(api.flowRuns.getFlowRuns, [updatedFlowRunFilter], subscriptionOptions)
+  const failedFlowRunSubscription = useSubscription(api.flowRuns.getFlowRuns, [failedFlowRunFilter], subscriptionOptions)
   const failedRuns = computed(() => {
-    return flowRunsSubscription.response ?? []
+    return failedFlowRunSubscription.response ?? []
   })
   const failedWorkQueueRuns = computed(() => failedRuns.value.map(run => run.workQueueName))
   const failedWorkQueues = computed(() => [...new Set(failedWorkQueueRuns.value)])
@@ -122,4 +149,24 @@
   const failedDeployments = computed(() => [...new Set(failedDeploymentRuns.value)])
   const failedFlowRuns = computed(() => failedRuns.value.map(run => run.flowId))
   const failedFlows = computed(() => [...new Set(failedFlowRuns.value)])
+  const lateFlowRunsSubscription = useSubscription(api.flowRuns.getFlowRuns, [lateFlowRunFilter], subscriptionOptions)
+  const lateRuns = computed(() => {
+    return lateFlowRunsSubscription.response ?? []
+  })
+  const lateWorkQueueRuns = computed(() => lateRuns.value.map(run => run.workQueueName))
+  const lateWorkQueues = computed(() => [...new Set(lateWorkQueueRuns.value)])
+  const recentFlowRunSubscription = useSubscription(api.flowRuns.getFlowRuns, [recentFlowRunFilter], subscriptionOptions)
+  const recentRuns = computed(() => {
+    return recentFlowRunSubscription.response ?? []
+  })
+  const recentFlowRuns = computed(() => recentRuns.value.map(run => run.flowId))
+  const recentFlows = computed(() => [...new Set(recentFlowRuns.value)])
 </script>
+
+<style>
+.overview-cards__card {
+  @apply
+  h-48
+  overflow-auto
+}
+</style>
