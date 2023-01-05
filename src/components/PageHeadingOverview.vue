@@ -1,8 +1,7 @@
 <template>
   <page-heading class="page-heading-overview" :crumbs="crumbs">
     <template v-if="!hideActions" #actions>
-      <p-tags-input v-model="tags" empty-message="All tags" class="overview__tags" />
-      {{ tags }} {{ uniqueTags }}
+      <p-select v-model="tags" empty-message="All tags" class="overview__tags" :options="uniqueTags" />
     </template>
   </page-heading>
 </template>
