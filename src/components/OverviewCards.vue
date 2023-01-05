@@ -1,7 +1,7 @@
 <template>
   <p-card class="overview-cards__card">
     <p-content>
-      Flows with recent runs
+      Flows With Recent Runs
       <div v-for="flow, index in recentFlows" :key="index">
         <FlowIconText :flow-id="flow" />
       </div>
@@ -10,7 +10,7 @@
 
   <p-card class="overview-cards__card">
     <p-content>
-      Flows with failed runs
+      Flows With Failed Runs
       <div v-for="flow, index in failedFlows" :key="index">
         <FlowIconText :flow-id="flow" />
       </div>
@@ -19,7 +19,16 @@
 
   <p-card class="overview-cards__card">
     <p-content>
-      Work Queues with failed runs
+      Deployments With Failed Runs
+      <div v-for="deployment, index in failedDeployments" :key="index">
+        <DeploymentIconText v-if="deployment" :deployment-id="deployment" />
+      </div>
+    </p-content>
+  </p-card>
+
+  <p-card class="overview-cards__card">
+    <p-content>
+      Work Queues With Failed Runs
       <div v-for="queue, index in failedWorkQueues" :key="index">
         <WorkQueueIconText v-if="queue" :work-queue-name="queue" />
       </div>
@@ -28,18 +37,9 @@
 
   <p-card class="overview-cards__card">
     <p-content>
-      Work Queues with late runs
+      Work Queues With Late Runs
       <div v-for="queue, index in lateWorkQueues" :key="index">
         <WorkQueueIconText v-if="queue" :work-queue-name="queue" />
-      </div>
-    </p-content>
-  </p-card>
-
-  <p-card class="overview-cards__card">
-    <p-content>
-      Deployments with failed runs
-      <div v-for="deployment, index in failedDeployments" :key="index">
-        <DeploymentIconText v-if="deployment" :deployment-id="deployment" />
       </div>
     </p-content>
   </p-card>
@@ -166,7 +166,7 @@
 <style>
 .overview-cards__card {
   @apply
-  h-48
+  h-36
   overflow-auto
 }
 </style>
