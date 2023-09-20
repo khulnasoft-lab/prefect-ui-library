@@ -6,6 +6,7 @@ export interface IWorkspaceWorkPoolsApi {
   createWorkPool: (request: WorkPoolCreate) => Promise<WorkPool>,
   getWorkPoolByName: (workPoolName: string) => Promise<WorkPool>,
   getWorkPools: (filter: WorkPoolsFilter) => Promise<WorkPool[]>,
+  getWorkPoolsCount: (filter: WorkPoolsFilter) => Promise<number>,
   updateWorkPool: (workPoolName: string, request: WorkPoolEdit) => Promise<void>,
   pauseWorkPool: (workPoolName: string) => Promise<void>,
   resumeWorkPool: (workPoolName: string) => Promise<void>,
@@ -36,6 +37,13 @@ export class WorkspaceWorkPoolsApi extends WorkspaceApi implements IWorkspaceWor
     const { data } = await this.post<WorkPoolResponse[]>('/filter', request)
 
     return mapper.map('WorkPoolResponse', data, 'WorkPool')
+  }
+
+  public async getWorkPoolsCount(filter: WorkPoolsFilter = {}): Promise<number> {
+    const request = mapper.map('WorkPoolsFilter', filter, 'WorkPoolsFilterRequest')
+    const { data } = await this.post<number>('/count', request)
+
+    return data
   }
 
   public updateWorkPool(name: string, request: WorkPoolEdit): Promise<void> {

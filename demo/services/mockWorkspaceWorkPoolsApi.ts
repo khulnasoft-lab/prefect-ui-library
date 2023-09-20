@@ -25,6 +25,15 @@ export class MockWorkspaceWorkPoolsApi extends MockApi implements IWorkspaceWork
     return await this.workPools.getAll()
   }
 
+  public async getWorkPoolsCount(filter: WorkPoolsFilter = {}): Promise<number> {
+    if (Object.keys(filter).length) {
+      console.warn('MockWorkspaceWorkPoolsApi has not implemented the filter argument of the getWorkPools method')
+    }
+
+    return await this.workPools.count()
+
+  }
+
   public async updateWorkPool(workPoolName: string, request: WorkPoolEdit): Promise<void> {
     return await this.workPools.patch(workPoolName, request)
   }
