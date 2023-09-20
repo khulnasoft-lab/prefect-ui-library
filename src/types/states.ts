@@ -49,3 +49,6 @@ export const prefectStateNamesWithoutScheduled = [
   'Failed',
   'TimedOut',
 ] as const
+
+
+export const prefectStateNameWithoutScheduledName = prefectStateNames.filter(name => name !== 'Scheduled') as const
