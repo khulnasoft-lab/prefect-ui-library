@@ -15,7 +15,7 @@
   }>()
 
   const emit = defineEmits<{
-    (event: 'delete' | 'update'): void,
+    (event: 'update'): void,
   }>()
 </script>
 
