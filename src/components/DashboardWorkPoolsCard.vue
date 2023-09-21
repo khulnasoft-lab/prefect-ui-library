@@ -23,11 +23,9 @@
 </template>
 
 <script lang="ts" setup>
-  import { useSubscription } from '@prefecthq/vue-compositions'
   import { computed } from 'vue'
   import DashboardWorkPoolCard from '@/components/DashboardWorkPoolCard.vue'
-  import { useDashboardSubscriptionOptions, useWorkspaceRoutes } from '@/compositions'
-  import { useWorkspaceApi } from '@/compositions/useWorkspaceApi'
+  import { useDashboardSubscriptionOptions, useWorkPools, useWorkspaceRoutes } from '@/compositions'
   import { localization } from '@/localization'
   import { WorkspaceDashboardFilter } from '@/types'
 
@@ -36,19 +34,12 @@
   }>()
 
   const subscriptionOptions = useDashboardSubscriptionOptions()
-
   const routes = useWorkspaceRoutes()
-  const api = useWorkspaceApi()
-
-  const workPoolsSubscription = useSubscription(api.workPools.getWorkPools, [], subscriptionOptions)
-  const activeWorkPools = computed(() => {
-    const workPools = workPoolsSubscription.response ?? []
-
-    return workPools.filter(workPool => !workPool.isPaused)
-  })
+  const { workPools, subscriptions } = useWorkPools({}, subscriptionOptions)
+  const activeWorkPools = computed(() => workPools.value.filter(workPool => !workPool.isPaused))
 
   const showEmptyMsg = computed(() => {
-    return workPoolsSubscription.response && activeWorkPools.value.length === 0
+    return subscriptions.executed && activeWorkPools.value.length === 0
   })
 </script>
 

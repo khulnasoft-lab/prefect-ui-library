@@ -1,10 +1,16 @@
 <template>
-  <p-combobox v-model="internalValue" v-bind="{ options, emptyMessage, multiple }">
+  <p-combobox v-model="selected" v-model:search="search" :options="options" manual @bottom="next">
     <template #combobox-options-empty>
       No work pools
     </template>
     <template #default="scope">
-      <slot v-bind="scope" />
+      <slot v-bind="scope">
+        <UseWorkPoolSlot v-if="isString(scope.value)" :work-pool-name="scope.value">
+          <template #default="{ workPool }">
+            {{ workPool.name }}
+          </template>
+        </UseWorkPoolSlot>
+      </slot>
     </template>
     <template #option="{ option }">
       <slot name="option" :option="option" />
@@ -14,41 +20,42 @@
 
 <script lang="ts" setup>
   import { PCombobox, SelectOption } from '@prefecthq/prefect-design'
-  import { useSubscription } from '@prefecthq/vue-compositions'
-  import { computed } from 'vue'
-  import { useWorkspaceApi } from '@/compositions'
+  import { useDebouncedRef } from '@prefecthq/vue-compositions'
+  import { computed, ref } from 'vue'
+  import UseWorkPoolSlot from '@/components/UseWorkPoolSlot.vue'
+  import { useWorkPools } from '@/compositions'
+  import { WorkPoolsFilter } from '@/models/Filters'
+  import { isString } from '@/utilities'
 
   const props = defineProps<{
     selected: string | string[] | null | undefined,
-    emptyMessage?: string,
     allowUnset?: boolean,
-    multiple?: boolean,
   }>()
 
-  const emits = defineEmits<{
-    (event: 'update:selected', value: string | string[] | null | undefined): void,
+  const emit = defineEmits<{
+    (event: 'update:selected', value: string | string[] | null): void,
   }>()
 
-  const multiple = computed(() => Array.isArray(props.selected))
+  const search = ref('')
+  const searchDebounced = useDebouncedRef(search, 500)
 
-  const internalValue = computed<typeof props.selected>({
+  const selected = computed({
     get() {
       return props.selected ?? null
     },
-    set(value: string | string[] | null | undefined) {
-      if (!value) {
-        emits('update:selected', null)
-      } else if (multiple.value) {
-        emits('update:selected', Array.isArray(value) ? value : [value])
-      } else {
-        emits('update:selected', value)
-      }
+    set(value) {
+      emit('update:selected', value)
     },
   })
 
-  const api = useWorkspaceApi()
-  const workPoolsSubscription = useSubscription(api.workPools.getWorkPools, [])
-  const workPools = computed(() => workPoolsSubscription.response ?? [])
+  const filter = (): WorkPoolsFilter => ({
+    workPools: {
+      nameLike: searchDebounced.value,
+    },
+    limit: 20,
+  })
+
+  const { workPools, next } = useWorkPools(filter, { mode: 'infinite' })
 
   const options = computed<SelectOption[]>(() => {
     const options: SelectOption[] = workPools.value.map(workPool => ({

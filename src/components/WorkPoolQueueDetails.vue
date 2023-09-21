@@ -33,11 +33,10 @@
 </template>
 
 <script lang="ts" setup>
-  import { useSubscriptionWithDependencies } from '@prefecthq/vue-compositions'
-  import { toRefs, computed } from 'vue'
+  import { computed } from 'vue'
   import { WorkPoolIconText, WorkPoolQueueStatusBadge } from '@/components'
-  import { useWorkspaceApi, useWorkQueueStatus } from '@/compositions'
-  import { WorkPoolQueue, WorkPoolsFilter } from '@/models'
+  import { useWorkQueueStatus, useWorkPools } from '@/compositions'
+  import { WorkPoolQueue } from '@/models'
   import { formatDateTimeNumeric } from '@/utilities/dates'
 
   const props = defineProps<{
@@ -46,22 +45,14 @@
     alternate?: boolean,
   }>()
 
-  const { workPoolName } = toRefs(props)
-  const api = useWorkspaceApi()
-
   const { workQueueStatus } = useWorkQueueStatus(props.workPoolQueue.id)
-  const workPoolArgs = computed<[WorkPoolsFilter] | null>(() => {
-    return [
-      {
-        workPools: {
-          id: [props.workPoolQueue.workPoolId],
-        },
-      },
-    ]
-  })
 
-  const workPoolsSubscription = useSubscriptionWithDependencies(api.workPools.getWorkPools, workPoolArgs)
-  const workPools = computed(() => workPoolsSubscription.response ?? [])
+  const { workPools } = useWorkPools(() => ({
+    workPools: {
+      id: [props.workPoolQueue.workPoolId],
+    },
+  }))
+
   const workPool = computed(() => workPools.value[0])
   const workQueueLastPolled = computed(() => workQueueStatus.value?.lastPolled ? formatDateTimeNumeric(workQueueStatus.value.lastPolled) : null)
 </script>

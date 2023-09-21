@@ -29,7 +29,6 @@
   const searchDebounced = useDebouncedRef(search, 1200)
   const { filter } = useWorkPoolsFilterFromRoute({
     workPools: {
-      // nameLike: searchDebounced
     },
   })
   const { workPools, subscriptions, total, pages } = useWorkPools({}, {
