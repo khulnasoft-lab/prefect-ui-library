@@ -24,7 +24,7 @@
         <p-checkbox v-model="selectedDeployments" :value="row.id" />
       </template>
 
-      <template #deployment-name="{ row }">
+      <template #name="{ row }">
         <div class="deployment-list__name-col">
           <span>
 
@@ -110,7 +110,6 @@
     DeploymentsDeleteButton,
     ResultsCount,
     SearchInput,
-    FlowRouterLink,
     MiniDeploymentHistory,
     SelectedCount,
     DeploymentMenu,
@@ -161,7 +160,11 @@
     },
     {
       property: 'name',
-      label: 'Deployment name',
+      label: 'Name',
+    },
+    {
+      label: 'Activity',
+      visible: media.md,
     },
     // {
     //   property: 'flowId',
@@ -176,10 +179,7 @@
       width: '100px',
       visible: media.md,
     },
-    {
-      label: 'Activity',
-      visible: media.md,
-    },
+
     {
       label: 'Created',
       visible: media.md,
@@ -239,7 +239,7 @@
 }
 
 .deployment-list__name { @apply
-  font-medium
+  font-bold
   mr-2
 }
 
