@@ -27,18 +27,23 @@
       <template #deployment-name="{ row }">
         <div class="deployment-list__name-col">
           <span>
-            <DeploymentStatusIcon v-if="can.access.deploymentStatus" :status="row.status" />
+
             <p-link :to="routes.deployment(row.id)" class="deployment-list__name">
               <span>{{ row.name }}</span>
             </p-link>
+            <DeploymentStatusIcon v-if="can.access.deploymentStatus" :status="row.status" />
           </span>
-          <span class="deployment-list__created-date">Created {{ formatDateTimeNumeric(row.created) }}</span>
+          <span class="deployment-list__created-date">
+            <FlowIconText :flow-id="row.flowId" />
+          </span>
         </div>
       </template>
 
-      <template #flow-name="{ row }">
+      <!--
+        <template #flow-name="{ row }">
         <FlowRouterLink :flow-id="row.flowId" />
-      </template>
+        </template>
+      -->
 
       <template #schedule="{ row }">
         <span :title="row.schedule?.toString({ verbose: true })">{{ handleSchedule(row.schedule) }}</span>
@@ -50,17 +55,13 @@
         </template>
       </template>
 
-      <template #applied-by="{ row }">
-        {{ row.appliedBy }}
-      </template>
-
-
-      <template #last-run="{ row }">
-        <LastDeploymentRun :deployment-id="row.flowId" />
-      </template>
-
-      <template #next-run="{ row }">
-        <NextDeploymentRun :deployment-id="row.flowId" />
+      <template #created="{ row }">
+        <div class="deployment-list__name-col">
+          <span>
+            {{ formatDateTime(row.created) }}
+          </span>
+          <span class="deployment-list__created-date"> By {{ row.appliedBy }}</span>
+        </div>
       </template>
 
       <template #activity="{ row }">
@@ -107,8 +108,6 @@
   import { computed, ref } from 'vue'
   import {
     DeploymentsDeleteButton,
-    // LastDeploymentRun,
-    // NextDeploymentRun,
     ResultsCount,
     SearchInput,
     FlowRouterLink,
@@ -116,14 +115,14 @@
     SelectedCount,
     DeploymentMenu,
     DeploymentTagsInput,
-    DeploymentStatusIcon
+    DeploymentStatusIcon,
+    FlowIconText
   } from '@/components'
   import { useCan, useDeploymentsFilterFromRoute, useWorkspaceRoutes, useDeployments } from '@/compositions'
   import { Deployment, isRRuleSchedule, Schedule } from '@/models'
   import { DeploymentsFilter } from '@/models/Filters'
   import { deploymentSortOptions } from '@/types/SortOptionTypes'
-  import { formatDateTimeNumeric } from '@/utilities/dates'
-
+  import { formatDateTime } from '@/utilities/dates'
 
   const props = defineProps<{
     filter?: DeploymentsFilter,
@@ -164,10 +163,10 @@
       property: 'name',
       label: 'Deployment name',
     },
-    {
-      property: 'flowId',
-      label: 'Flow name',
-    },
+    // {
+    //   property: 'flowId',
+    //   label: 'Flow name',
+    // },
     {
       label: 'Schedule',
       visible: media.md,
@@ -182,7 +181,7 @@
       visible: media.md,
     },
     {
-      label: 'Applied by',
+      label: 'Created',
       visible: media.md,
     },
     {
@@ -241,7 +240,7 @@
 
 .deployment-list__name { @apply
   font-medium
-  ml-2
+  mr-2
 }
 
 .deployment-list__created-date { @apply
