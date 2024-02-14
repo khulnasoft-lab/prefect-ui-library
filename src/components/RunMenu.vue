@@ -2,10 +2,11 @@
   <p-pop-over ref="popOver" class="run-menu" auto-close :placement="placement" @keydown.esc="esc">
     <template #target="{ toggle }">
       <p-button
+        v-if="deployment.can.run"
         ref="runButton"
         class="run-menu__run-button"
         icon-append="PlayIcon"
-        :disabled="deployment.deprecated || !deployment.can.run"
+        :disabled="deployment.deprecated"
         @click="toggle"
       >
         Run
